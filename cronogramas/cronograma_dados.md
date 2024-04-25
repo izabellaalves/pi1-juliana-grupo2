@@ -20,7 +20,7 @@ N° | Atividade     | Início Previsto | Início Realizado | Fim Previsto | Fim 
 | 4 |Ponto de Controle 1 |06/05/2024	|06/05/2024	|06/05/2024	|06/05/2024	 | 1, 2 e 3 | Todos    |
 | 5 | Levantamento de Requisitos do Sistema	|24/04/2024	|XX/04/2024	| 24/04/2024	|XX/04/2024	| | Todos|
 | 6 | Escolha do SGBD	| 24/04/2024	 | XX/04/2024	|  24/04/2024	  | XX/04/2024	| | Todos    |
-| 7 | Modelagem do Banco		|24/04/2024	 | XX/04/2024	|  29/04/2024	  | XX/04/2024	| |  |
+| 7 | Modelagem do Banco		|24/04/2024	 | XX/04/2024	|  29/04/2024	  | XX/04/2024	| | Izabella |
 | 8 | Definir Plataforma da Interface		| 24/04/2024	 | XX/04/2024	|  24/04/2024	  | XX/04/2024	| | Todos |
 | 9 | Definição das Tecnologias | 24/04/2024	 | XX/04/2024	|  24/04/2024	  | XX/04/2024	| | Todos |
 | 10 | Prototipação e Validação		|29/04/2024	| XX/04/2024	| 15/05/2024	| XX/05/2024	| 5 | Raquel e Esther |
