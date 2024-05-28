@@ -1,0 +1,42 @@
+services:
+  db:
+    image: postgres
+    volumes:
+      - ./dados/modelagem:/docker-entrypoint-initdb.d
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ProjetoIntegrador1
+      POSTGRES_USER: alunos
+      POSTGRES_PASSWORD: alunospi1
+    ports:
+      - "5432:5432"
+
+  app:
+    image: node:14
+    command: bash -c "npm install && npm start"
+    volumes:
+      - ./app/api:/app
+    working_dir: /app
+    ports:
+      - "3333:3333"
+    depends_on:
+      - db
+
+  # pgadmin:
+  #     image: dpage/pgadmin4
+  #     environment:
+  #       PGADMIN_DEFAULT_EMAIL: "pgadmin4@pgadmin.org"
+  #       PGADMIN_DEFAULT_PASSWORD: "admin"
+  #     ports:
+  #       - "8080:80"
+  #     depends_on:
+  #       - db
+  adminer:
+    image: adminer
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
