@@ -22,21 +22,16 @@ services:
     depends_on:
       - db
 
-  # pgadmin:
-  #     image: dpage/pgadmin4
-  #     environment:
-  #       PGADMIN_DEFAULT_EMAIL: "pgadmin4@pgadmin.org"
-  #       PGADMIN_DEFAULT_PASSWORD: "admin"
-  #     ports:
-  #       - "8080:80"
-  #     depends_on:
-  #       - db
-  adminer:
-    image: adminer
-    ports:
-      - "8080:8080"
-    depends_on:
-      - db
+  pgadmin:
+      image: dpage/pgadmin4
+      environment:
+        PGADMIN_DEFAULT_EMAIL: "pgadmin4@pgadmin.org"
+        PGADMIN_DEFAULT_PASSWORD: "admin"
+      ports:
+        - "8080:80"
+      depends_on:
+        - db
+
 
 volumes:
   postgres_data:
