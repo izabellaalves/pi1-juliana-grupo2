@@ -5,7 +5,7 @@ import os
 import psycopg2
 from datetime import datetime
 
-bluetoothport = 'COM7'  # Substitua pela porta correta encontrada no Gerenciador de Dispositivos
+bluetoothport = 'COM3'  # Substitua pela porta correta encontrada no Gerenciador de Dispositivos
 baudrate = 115200
 
 try:
@@ -27,7 +27,6 @@ def read_data_from_esp32():
         print(f"Erro ao ler dados: {e}")
     return None
 
-#funcão para salvar os dados no banco de dados
 def save_data_to_postgresql(data):
     global last_read_time, last_velocity
     
@@ -39,6 +38,7 @@ def save_data_to_postgresql(data):
         port="5432",
         database="ProjetoIntegrador1"
         )
+        
         cursor = connection.cursor()
 
         data_json = json.loads(data)
@@ -82,30 +82,6 @@ def save_data_to_postgresql(data):
 
     except Exception as e:
         print(f"Erro: {e}")
-
-if __name__ == "_main_":
-    print("Aguardando dados")
-
-    try:
-        while True:
-            data = {
-                "trajetoria": {"pontos": [{"x": 0, "y": 0}, {"x": 1, "y": 1}, {"x": 2, "y": 4}]},
-                "tempo": 3,
-                "velocidade": 56.9,
-                "aceleracao": 98.9,
-                "consumoEnergetico": 230.5
-                }   # read_data_from_esp32()
-            
-            if data:
-                print(f"Dado recebido: {data}")
-                save_data_to_postgresql(data)
-            time.sleep(1)
-    except KeyboardInterrupt:
-        print("Programa encerrado")
-    """  finally:
-        ser.close()
-    """
-
 
 if __name__ == "__main__":
     print("Aguardando dados...")
