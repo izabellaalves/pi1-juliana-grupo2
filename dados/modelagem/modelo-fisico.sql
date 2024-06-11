@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS ESTATISTICAS_CARRINHO (
 CREATE TABLE IF NOT EXISTS CARRINHO (
   idCarrinho SERIAL PRIMARY KEY,
   versao VARCHAR(3),
-  UNIQUE(idCarrinho, versao)
+  UNIQUE(idCarrinho, versao),
   dataLancamento DATE,
   idEstatisticaCarrinho INT,
   CONSTRAINT CARRINHO_ESTATISTICA_FK FOREIGN KEY (idEstatisticaCarrinho) REFERENCES ESTATISTICAS_CARRINHO (idEstatistica)
