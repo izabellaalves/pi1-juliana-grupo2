@@ -1,38 +1,77 @@
-.App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  height: 100vh;
+  background: linear-gradient(135deg, #0073ff, #23074d);
   color: white;
+  font-family: 'Arial', sans-serif;
 }
 
-.App-link {
-  color: #61dafb;
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 20px 40px;
+  box-sizing: border-box;
+  border-bottom: 2px solid white;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.title {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.info {
+  display: flex;
+  align-items: center;
+}
+
+.project-details {
+  display: flex;
+  align-items: center;
+  margin-right: 20px;
+}
+
+.project-details span {
+  margin-right: 10px; 
+}
+
+.icons {
+  display: flex;
+  align-items: center;
+}
+
+.icons a,
+.icons img {
+  margin-left: 10px;
+}
+
+.icons .icon-image {
+  width: 30px;
+  height: 30px;
+}
+
+.icons .unb-image {
+  width: 40px;
+  height: 20px;
+}
+
+.icons a:hover .icon-image {
+  filter: brightness(1.2); /* or any hover effect you prefer */
+}
+
+.content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+}
+
+.ImgCarrinho {
+  width: 1200px;
+  height: auto;
+  margin-right: 15%;
 }
