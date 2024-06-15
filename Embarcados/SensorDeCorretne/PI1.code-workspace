@@ -1,0 +1,24 @@
+{
+	"folders": [
+		{
+			"path": "../PI1"
+		},
+		{
+			"name": "Infra",
+			"path": "../Infra"
+		},
+		{
+			"name": "Ticker",
+			"path": "../Ticker"
+		},
+		{
+			"name": "Teste Bluetooth",
+			"path": "../Teste Bluetooth"
+		},
+		{
+			"name": "SensorDeCorretne",
+			"path": "."
+		}
+	],
+	"settings": {}
+}
