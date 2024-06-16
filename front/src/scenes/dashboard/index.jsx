@@ -1,7 +1,7 @@
-import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { Box, Button, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../theme";
-import { mockTransactions } from "../../data/mockData";
-import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
 import Header from "../../components/Header";
 import LineChart from "../../components/LineChart";
 import GeographyChart from "../../components/GeographyChart";
@@ -15,6 +15,24 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 const Dashboard = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+
+  const [mediaData, setMediaData] = useState(null);
+  const [realizaData, setRealizaData] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const mediaResponse = await axios.get('http://localhost:3333/media');
+        const realizaResponse = await axios.get('http://localhost:3333/dados');
+        setMediaData(mediaResponse.data[0]);
+        setRealizaData(realizaResponse.data[0]);
+      } catch (error) {
+        console.error('Error fetching data', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <Box m="20px">
@@ -34,7 +52,6 @@ const Dashboard = () => {
           >
             Trajetórias Anteriores
             <KeyboardArrowDownIcon sx={{ ml: "10px" }} />
-            
           </Button>
         </Box>
       </Box>
@@ -47,86 +64,91 @@ const Dashboard = () => {
         gap="20px"
       >
         {/* ROW 1 */}
-        {/* DISTANCIA */}
-        <Box
-          gridColumn="span 2"
-          backgroundColor={colors.primary[400]}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <StatBox
-            title="1,36 m"
-            subtitle="Distância"
-            progress="0.75"
-            increase=""
-            icon={
-              <StraightenIcon
-                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
+        {mediaData && (
+          <>
+            {/* DISTANCIA */}
+            <Box
+              gridColumn="span 2"
+              backgroundColor={colors.primary[400]}
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+            >
+              <StatBox
+                title={`${mediaData.mediaTamanhoPercursos} m`}
+                subtitle="Distância"
+                progress="0.75"
+                increase=""
+                icon={
+                  <StraightenIcon
+                    sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
+                  />
+                }
               />
-            }
-          />
-        </Box>
-        {/* TEMPO */}
-        <Box
-          gridColumn="span 2"
-          backgroundColor={colors.primary[400]}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <StatBox
-            title="90,22 s"
-            subtitle="Tempo"
-            progress="0.50"
-            increase=""
-            icon={
-              <TimerIcon
-                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
+            </Box>
+            {/* TEMPO */}
+            <Box
+              gridColumn="span 2"
+              backgroundColor={colors.primary[400]}
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+            >
+              <StatBox
+                title={`${mediaData.mediaTempoPercursos} s`}
+                subtitle="Tempo"
+                progress="0.50"
+                increase=""
+                icon={
+                  <TimerIcon
+                    sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
+                  />
+                }
               />
-            }
-          />
-        </Box>
-        {/* AUTONOMIA */}
-        <Box
-          gridColumn="span 2"
-          backgroundColor={colors.primary[400]}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <StatBox
-            title="32,44"
-            subtitle="Autonomia"
-            progress="0.30"
-            increase=""
-            icon={
-              <BatterySaverIcon
-                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
+            </Box>
+            {/* AUTONOMIA */}
+            <Box
+              gridColumn="span 2"
+              backgroundColor={colors.primary[400]}
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+            >
+              <StatBox
+                title={`${mediaData.mediaConsumoEnergetico}`}
+                subtitle="Autonomia"
+                progress="0.30"
+                increase=""
+                icon={
+                  <BatterySaverIcon
+                    sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
+                  />
+                }
               />
-            }
-          />
-        </Box>
-        {/* CONSUMO ENERGETICO */}
-        <Box
-          gridColumn="span 2"
-          backgroundColor={colors.primary[400]}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <StatBox
-            title="15,32 KWh"
-            subtitle="Consumo Energético"
-            progress="0.80"
-            increase=""
-            icon={
-              <FlashOnIcon
-                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
+            </Box>
+            {/* CONSUMO ENERGETICO */}
+            <Box
+              gridColumn="span 2"
+              backgroundColor={colors.primary[400]}
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+            >
+              <StatBox
+                title={`${mediaData.mediaConsumoEnergetico} KWh`}
+                subtitle="Consumo Energético"
+                progress="0.80"
+                increase=""
+                icon={
+                  <FlashOnIcon
+                    sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
+                  />
+                }
               />
-            }
-          />
-        </Box>
+            </Box>
+          </>
+        )}
+        
         {/* TRAJETORIA */}
         <Box
           gridColumn="span 4"
@@ -139,7 +161,7 @@ const Dashboard = () => {
             fontWeight="600"
             sx={{ marginBottom: "15px" }}
           >
-            Tragetória
+            Trajetória
           </Typography>
           <Box height="200px">
             <GeographyChart isDashboard={true} />
@@ -173,7 +195,7 @@ const Dashboard = () => {
                 fontWeight="bold"
                 color={colors.greenAccent[500]}
               >
-                59,342 m/s
+                {realizaData ? `${realizaData.velocidadeInstantanea} m/s` : 'Carregando...'}
               </Typography>
             </Box>
           </Box>
@@ -207,7 +229,7 @@ const Dashboard = () => {
                 fontWeight="bold"
                 color={colors.greenAccent[500]}
               >
-                59,342 m/s²
+                {realizaData ? `${realizaData.aceleracaoInstantanea} m/s²` : 'Carregando...'}
               </Typography>
             </Box>
           </Box>
