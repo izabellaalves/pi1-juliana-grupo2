@@ -19,6 +19,16 @@ const Dashboard = () => {
   const [mediaData, setMediaData] = useState(null);
   const [realizaData, setRealizaData] = useState(null);
 
+  const [tick, setTick] = useState(0);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setTick(tick => tick + 1);
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -32,7 +42,7 @@ const Dashboard = () => {
     };
 
     fetchData();
-  }, []);
+  }, [tick]); // Dependência adicionada aqui
 
   return (
     <Box m="20px">

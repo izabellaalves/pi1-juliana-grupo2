@@ -37,7 +37,7 @@ const Topbar = () => {
           )}
         </IconButton>
         <Link href="https://github.com/izabellaalves/pi1-juliana-grupo2" target="_blank">
-          <IconButton>
+          <IconButton >
             <GitHubIcon />
           </IconButton>
         </Link>
