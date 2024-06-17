@@ -38,7 +38,7 @@ const Dashboard = () => {
     <Box m="20px">
       {/* HEADER */}
       <Box display="flex" justifyContent="space-between" alignItems="center">
-        <Header title="CARRINHO DE LINHA" subtitle="Projeto de Algoritmo | Turma 4 | Grupo 2" />
+        <Header title="CARRINHO DE LINHA" subtitle="PI 1 | Turma 4 | Grupo 2 | Projeto de Algoritmo" />
 
         <Box>
           <Button

@@ -1,14 +1,17 @@
 import { Box, IconButton, useTheme, Link } from "@mui/material";
 import { useContext } from "react";
-import { ColorModeContext, tokens } from "../../theme";
+import { ColorModeContext } from "../../theme";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
-import GitHubIcon from '@mui/icons-material/GitHub';import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
+import GitHubIcon from '@mui/icons-material/GitHub';
+// import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import SearchIcon from "@mui/icons-material/Search";
+
+import LogoUnB from "../../assets/logo-UnB.png";
 
 const Topbar = () => {
   const theme = useTheme();
-  const colors = tokens(theme.palette.mode);
+  // const colors = tokens(theme.palette.mode);
   const colorMode = useContext(ColorModeContext);
 
   return (
@@ -20,8 +23,8 @@ const Topbar = () => {
       >
         <IconButton type="button" sx={{ p: 1 }}>
           <SearchIcon />
-          ==Logo UnB==
         </IconButton>
+        <img src={LogoUnB} style={{ width: '100px', height: '50px', marginLeft: '10px'}} alt="Logo UnB" />
       </Box>
 
       {/* ICONS */}
