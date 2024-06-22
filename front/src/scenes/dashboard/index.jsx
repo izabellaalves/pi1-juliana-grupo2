@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { Box, Button, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../theme";
 import Header from "../../components/Header";
@@ -16,7 +15,7 @@ const Dashboard = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
-  const [mediaData, setMediaData] = useState(null);
+  // const [mediaData, setMediaData] = useState(null);
   const [realizaData, setRealizaData] = useState(null);
 
   const [tick, setTick] = useState(0);
@@ -29,20 +28,33 @@ const Dashboard = () => {
     return () => clearInterval(intervalId);
   }, []);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const mediaResponse = await axios.get('http://localhost:3333/media');
-        const realizaResponse = await axios.get('http://localhost:3333/dados');
-        setMediaData(mediaResponse.data[0]);
-        setRealizaData(realizaResponse.data[0]);
-      } catch (error) {
-        console.error('Error fetching data', error);
+  const fetchData = async () => {
+    try {
+      /* const mediaResponse = await fetch('http://localhost:3333/media');
+      if (!mediaResponse.ok) {
+        throw new Error('Failed to fetch media data');
       }
-    };
+      const mediaData = await mediaResponse.json();
+      setMediaData(mediaData[0]);
+   */
+      const realizaResponse = await fetch('http://localhost:5000/data');
+      if (!realizaResponse.ok) {
+        throw new Error('Failed to fetch realiza data');
+      }
+      const realizaData = await realizaResponse.json();
+      setRealizaData(realizaData);
+
+      console.log('realizaData', realizaData);
+    } catch (error) {
+      console.error('Error fetching data', error);
+    }
+  };
+
+
+  useEffect(() => {
 
     fetchData();
-  }, [tick]); // Dependência adicionada aqui
+  }, [tick]);
 
   return (
     <Box m="20px">
@@ -50,7 +62,7 @@ const Dashboard = () => {
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <Header title="CARRINHO DE LINHA" subtitle="PI 1 | Turma 4 | Grupo 2 | Projeto de Algoritmo" />
 
-        <Box>
+        {/* <Box>
           <Button
             sx={{
               backgroundColor: colors.blueAccent[700],
@@ -63,7 +75,8 @@ const Dashboard = () => {
             Trajetórias Anteriores
             <KeyboardArrowDownIcon sx={{ ml: "10px" }} />
           </Button>
-        </Box>
+        </Box> */}
+
       </Box>
 
       {/* GRID & CHARTS */}
@@ -74,28 +87,8 @@ const Dashboard = () => {
         gap="20px"
       >
         {/* ROW 1 */}
-        {mediaData && (
+        {realizaData && (
           <>
-            {/* DISTANCIA */}
-            <Box
-              gridColumn="span 2"
-              backgroundColor={colors.primary[400]}
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-            >
-              <StatBox
-                title={`${mediaData.mediaTamanhoPercursos} m`}
-                subtitle="Distância"
-                progress="0.75"
-                increase=""
-                icon={
-                  <StraightenIcon
-                    sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
-                  />
-                }
-              />
-            </Box>
             {/* TEMPO */}
             <Box
               gridColumn="span 2"
@@ -105,7 +98,7 @@ const Dashboard = () => {
               justifyContent="center"
             >
               <StatBox
-                title={`${mediaData.mediaTempoPercursos} s`}
+                title={`${realizaData.tempo} s`}
                 subtitle="Tempo"
                 progress="0.50"
                 increase=""
@@ -116,8 +109,9 @@ const Dashboard = () => {
                 }
               />
             </Box>
+
             {/* AUTONOMIA */}
-            <Box
+            {/* <Box
               gridColumn="span 2"
               backgroundColor={colors.primary[400]}
               display="flex"
@@ -125,7 +119,7 @@ const Dashboard = () => {
               justifyContent="center"
             >
               <StatBox
-                title={`${mediaData.mediaConsumoEnergetico}`}
+                title={`${realizaData.consumoEnergetico}`}
                 subtitle="Autonomia"
                 progress="0.30"
                 increase=""
@@ -135,7 +129,8 @@ const Dashboard = () => {
                   />
                 }
               />
-            </Box>
+            </Box> */}
+
             {/* CONSUMO ENERGETICO */}
             <Box
               gridColumn="span 2"
@@ -145,7 +140,7 @@ const Dashboard = () => {
               justifyContent="center"
             >
               <StatBox
-                title={`${mediaData.mediaConsumoEnergetico} KWh`}
+                title={`${realizaData.consumoEnergetico} KWh`}
                 subtitle="Consumo Energético"
                 progress="0.80"
                 increase=""
@@ -158,7 +153,7 @@ const Dashboard = () => {
             </Box>
           </>
         )}
-        
+
         {/* TRAJETORIA */}
         <Box
           gridColumn="span 4"
