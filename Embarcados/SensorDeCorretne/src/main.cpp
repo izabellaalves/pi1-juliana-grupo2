@@ -1,7 +1,7 @@
 #include <Arduino.h>
 
 // Defina o pino analógico onde o ACS712 está conectado
-const int sensorPin = A0;
+const int sensorPin = 35;
 
 // Defina a tensão de referência do Arduino (5V)
 const float referenceVoltage = 5.0;
@@ -29,13 +29,13 @@ void loop() {
     sensorValue = analogRead(sensorPin);
 
     // Converter o valor lido para tensão
-    voltage = (sensorValue / 1024.0) * referenceVoltage;
+    voltage = (sensorValue / 4095.0) * referenceVoltage;
 
     // Calcular a corrente (corrente = (tensão - 2.5V) / sensibilidade)
     current = (voltage - (referenceVoltage / 2)) / (sensitivity / 1000);
 
     // Calcular a potência (assumindo uma tensão constante de 220V)
-    power = current * 220.0;
+    power = current * 5.0;
 
     // Calcular o consumo de energia (energia = potência * tempo)
     unsigned long currentMillis = millis();
