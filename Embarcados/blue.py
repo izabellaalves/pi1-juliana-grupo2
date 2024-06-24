@@ -5,7 +5,7 @@ import os
 import psycopg2
 from datetime import datetime
 
-bluetoothport = 'COM3'  # Substitua pela porta correta encontrada no Gerenciador de Dispositivos
+bluetoothport = '/dev/rfcomm0'  # Substitua pela porta correta encontrada no Gerenciador de Dispositivos
 baudrate = 115200
 
 try:
@@ -28,7 +28,6 @@ def read_data_from_esp32():
     return None
 
 def save_data_to_postgresql(data):
-    global last_read_time, last_velocity
     
     try:
         connection = psycopg2.connect(
@@ -45,19 +44,6 @@ def save_data_to_postgresql(data):
 
         current_time = datetime.now()
 
-        # calcular velocidade e aceleração instantâneas
-        if last_read_time is not None and last_velocity is not None:
-            time_diff = (current_time - last_read_time).total_seconds()
-            velocity_diff = data_json.get("velocidade") - last_velocity
-
-            instant_velocity = data_json.get("velocidade")
-            instant_acceleration = velocity_diff / time_diff
-        else:
-            instant_velocity = data_json.get("velocidade")
-            instant_acceleration = 0
-
-        last_read_time = current_time
-        last_velocity = data_json.get("velocidade")
 
         insert_query = """
         INSERT INTO realiza (idCarrinho, idPercurso, dataRealizacao, velocidadeInstantanea, aceleracaoInstantanea, conclusaoPercurso, consumoEnergetico, versao, conclusao)
@@ -67,8 +53,8 @@ def save_data_to_postgresql(data):
             1,  # idCarrinho
             1,  # idPercurso
             current_time,  # dataRealizacao
-            instant_velocity,  # velocidadeInstantanea
-            instant_acceleration,  # aceleracaoInstantanea
+            data_json.get('velocidade'),  # velocidadeInstantanea
+            data_json.get('aceleracao'),  # aceleracaoInstantanea
             json.dumps(data_json.get("trajetoria")),  # conclusaoPercurso
             data_json.get("consumoEnergetico"),  # consumoEnergetico
             1,  # versao 
