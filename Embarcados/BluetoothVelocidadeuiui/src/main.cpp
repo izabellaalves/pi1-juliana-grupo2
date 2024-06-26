@@ -52,12 +52,12 @@ void loop() {
   StaticJsonDocument<200> jsonDoc;
 
   // Adicionar os dados ao objeto JSON
-  jsonDoc["trajetoria"] = "";
+  jsonDoc["trajetoria"] = serialized("[[1, 2], [3, 4], [5, 6]]");
+  jsonDoc["consumoEnergetico"] = 100;
   jsonDoc["tempo"] = tempoDecorrido; // Use o tempo decorrido da variável global
-  jsonDoc["velocidadeX"] = mpu6050.getAccX();
-  jsonDoc["velocidadeY"] = mpu6050.getAccY();
-  jsonDoc["velocidadeZ"] = mpu6050.getAccZ();
-  jsonDoc["aceleracao"] = 98.9; // Este valor não está sendo atualizado com base no sensor
+  jsonDoc["aceleracaoX"] = mpu6050.getAccX();
+  jsonDoc["aceleracaoY"] = mpu6050.getAccY();
+  // jsonDoc["aceleracaoZ"] = mpu6050.getAccZ();
 
   // Serializar o objeto JSON em uma string
   char jsonBuffer[256];
@@ -70,7 +70,7 @@ void loop() {
   // Adicionar qualquer código adicional que você tenha aqui
 
   // Aguardar um tempo antes de enviar o próximo JSON (opcional)
-  delay(1000);
+  delay(20);
 
   // Verificar se há dados recebidos via Bluetooth
   if (SerialBT.available()) {
