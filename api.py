@@ -7,10 +7,11 @@ from datetime import datetime
 from flask import Flask, request, jsonify
 from threading import Thread
 from flask_cors import CORS
+import numpy as np
 
 # Configurações de conexão serial
 
-""" bluetoothport = 'COM4'
+bluetoothport = 'COM5'
 baudrate = 115200
 
 try:
@@ -18,10 +19,50 @@ try:
     print(f"Conectado à porta {bluetoothport} com baudrate {baudrate}")
 except Exception as e:
     print(f"Erro ao conectar na porta serial: {e}")
-    exit() """
+    exit()
 
 app = Flask(__name__)
 CORS(app)
+
+# Variáves globais
+
+g_to_m_per_s2 = 9.8
+velocidade_x_global = 0.0
+velocidade_y_global = 0.0
+
+delta_t = 1.0
+
+def convert_g_to_m_per_s2(acceleration_g):
+    return round(acceleration_g * g_to_m_per_s2, 1)
+
+def resetar_velocidades_globais():
+    global velocidade_x_global, velocidade_y_global, velocidade_z_global
+    velocidade_x_global = 0.0
+    velocidade_y_global = 0.0
+
+def calcular_velocidade_resultante(aceleracao_x, aceleracao_y, aceleracao_z):
+    global velocidade_x_global, velocidade_y_global, velocidade_z_global
+
+    # Atualiza as velocidades integrando as acelerações
+    velocidade_x_global += aceleracao_x * delta_t
+    velocidade_y_global += aceleracao_y * delta_t
+
+    # Calcula a velocidade resultante
+    velocidade_resultante = np.sqrt(velocidade_x_global**2 + velocidade_y_global**2)
+    
+    if (velocidade_resultante < 0.5): return 0.0
+
+    return velocidade_resultante
+
+def calcular_aceleracao_resultante(aceleracao_x, aceleracao_y):
+    # Converte as acelerações de g para m/s^2 com arredondamento
+    aceleracao_x_m_s2 = convert_g_to_m_per_s2(aceleracao_x)
+    aceleracao_y_m_s2 = convert_g_to_m_per_s2(aceleracao_y)
+    
+    # Calcula a aceleração resultante
+    aceleracao_resultante = np.sqrt(aceleracao_x_m_s2**2 + aceleracao_y_m_s2**2)
+    
+    return aceleracao_resultante
 
 # Configuração do banco de dados SQLite
 
@@ -69,7 +110,7 @@ def init_db():
 
 init_db()
 
-""" def read_data_from_esp32():
+def read_data_from_esp32():
     try:
         if ser.in_waiting > 0:
             data = ser.readline().decode('utf-8').strip()
@@ -79,7 +120,7 @@ init_db()
             print("Nenhum dado disponível na porta serial.")
     except Exception as e:
         print(f"Erro ao ler dados: {e}")
-    return None """
+    return None
 
 def save_data_to_sqlite(data):
     try:
@@ -97,8 +138,8 @@ def save_data_to_sqlite(data):
             1,  # idCarrinho
             1,  # idPercurso
             current_time,  # dataRealizacao
-            data_json.get("velocidade"),  # velocidadeInstantanea
-            data_json.get("aceleracao"),  # aceleracaoInstantanea
+            calcular_velocidade_resultante(data_json.get("aceleracaoX"), data_json.get("aceleracaoY"), data_json.get("aceleracaoZ")),  # velocidadeInstantanea
+            calcular_aceleracao_resultante(data_json.get("aceleracaoX"), data_json.get("aceleracaoY")),  # aceleracaoInstantanea
             json.dumps(data_json.get("trajetoria")),  # trajetoria
             data_json.get("consumoEnergetico"),  # consumoEnergetico
             "1.0",  # versao 
@@ -194,16 +235,17 @@ if __name__ == "__main__":
     flask_thread.start()
     
     reset_db()
+    resetar_velocidades_globais()
 
     try:
         while True:
-            #data = read_data_from_esp32()
-            data = '{"velocidade": 10, "aceleracao": 5, "trajetoria": [[1, 2], [3, 4], [5, 6]], "consumoEnergetico": 100, "tempo": 10}'
+            data = read_data_from_esp32()
+            # data = '{"trajetoria": [[1, 2], [3, 4], [5, 6]], "consumoEnergetico": 100, "tempo": 10, "aceleracaoX": 0.01, "aceleracaoY": -0.01, "aceleracaoZ": 0.84}'
             if data:
                 print(f"Dado recebido: {data}")
                 save_data_to_sqlite(data)
-            time.sleep(1)
+            time.sleep(0.02)
     except KeyboardInterrupt:
         print("Programa encerrado")
-    """ finally: """
-    """     ser.close() """
+    finally: 
+        ser.close()
