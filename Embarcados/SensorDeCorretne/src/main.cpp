@@ -4,11 +4,12 @@
 const int sensorPin = 35;
 
 // Defina a tensão de referência do Arduino (5V)
-const float referenceVoltage = 5.0;
+const float referenceVoltage = 3.3;
 
 // Defina a sensibilidade do sensor ACS712
 // ACS712-05B = 185 mV/A, ACS712-20A = 100 mV/A, ACS712-30A = 66 mV/A
-const float sensitivity = 185.0; // para ACS712-05B
+const float sensitivity = 0.185; // Sensibilidade em V/A (185 mV/A convertido para V/A)
+ // para ACS712-05B
 
 // Variáveis para armazenar valores
 float sensorValue = 0;
@@ -32,10 +33,10 @@ void loop() {
     voltage = (sensorValue / 4095.0) * referenceVoltage;
 
     // Calcular a corrente (corrente = (tensão - 2.5V) / sensibilidade)
-    current = (voltage - (referenceVoltage / 2)) / (sensitivity / 1000);
+    current = (voltage - (referenceVoltage / 2)) / (sensitivity);
 
     // Calcular a potência (assumindo uma tensão constante de 220V)
-    power = current * 5.0;
+    power = current * 5;
 
     // Calcular o consumo de energia (energia = potência * tempo)
     unsigned long currentMillis = millis();
@@ -49,7 +50,7 @@ void loop() {
     Serial.print(current);
     Serial.print(" A, Potência: ");
     Serial.print(power);
-    Serial.print(" W, Energia: ");
+    Serial.print(" W, Consumo Energetico: ");
     Serial.print(energy);
     Serial.println(" Wh");
 
