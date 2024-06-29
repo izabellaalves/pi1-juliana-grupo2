@@ -33,7 +33,7 @@ velocidade_y_global = 0.0
 delta_t = 1.0
 
 def convert_g_to_m_per_s2(acceleration_g):
-    return round(acceleration_g * g_to_m_per_s2, 1)
+    return round(acceleration_g * g_to_m_per_s2, 2)
 
 def resetar_velocidades_globais():
     global velocidade_x_global, velocidade_y_global
@@ -41,6 +41,11 @@ def resetar_velocidades_globais():
     velocidade_y_global = 0.0
 
 def calcular_velocidade_resultante(aceleracao_x, aceleracao_y):
+    
+    aceleracao_resultante = calcular_aceleracao_resultante(aceleracao_x, aceleracao_y)
+    
+    if aceleracao_resultante == 0.0: return 0.0
+    
     global velocidade_x_global, velocidade_y_global
     
     aceleracao_x_m_s2 = convert_g_to_m_per_s2(aceleracao_x)
@@ -141,8 +146,8 @@ def save_data_to_sqlite(data):
             1,  # idCarrinho
             1,  # idPercurso
             current_time,  # dataRealizacao
-            calcular_velocidade_resultante(round(data_json.get("aceleracaoX"), 1), round(data_json.get("aceleracaoY"), 1)),  # velocidadeInstantanea
-            calcular_aceleracao_resultante(round(data_json.get("aceleracaoX"), 1), round(data_json.get("aceleracaoY"), 1)), # aceleracaoInstantanea
+            calcular_velocidade_resultante(round(data_json.get("aceleracaoX"), 2), round(data_json.get("aceleracaoY"), 2)),  # velocidadeInstantanea
+            calcular_aceleracao_resultante(round(data_json.get("aceleracaoX"), 2), round(data_json.get("aceleracaoY"), 2)), # aceleracaoInstantanea
             json.dumps(data_json.get("trajetoria")),  # trajetoria
             data_json.get("consumoEnergetico"),  # consumoEnergetico
             "1.0",  # versao 
