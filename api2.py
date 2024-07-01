@@ -85,7 +85,8 @@ def init_db():
       consumoEnergetico INT,
       versao VARCHAR(3),
       tempo INT,
-      timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+      timestampApi DATETIME DEFAULT CURRENT_TIMESTAMP,
+      timestampPlaca DATETIME DEFAULT CURRENT_TIMESTAMP
     )
     '''
 ]
@@ -121,8 +122,8 @@ def save_data_to_sqlite(data):
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         cursor.execute('''
-        INSERT INTO REALIZA (idCarrinho, idPercurso, dataRealizacao, velocidadeInstantanea, aceleracaoInstantanea, trajetoria, consumoEnergetico, versao, tempo, timestamp)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO REALIZA (idCarrinho, idPercurso, dataRealizacao, velocidadeInstantanea, aceleracaoInstantanea, trajetoria, consumoEnergetico, versao, tempo, timestampApi, timestampPlaca)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (
             1,  # idCarrinho
             1,  # idPercurso
@@ -133,7 +134,8 @@ def save_data_to_sqlite(data):
             data_json.get("consumoEnergetico"),  # consumoEnergetico
             "1.0",  # versao 
             data_json.get("tempo"),  # tempo
-            current_time  # timestamp
+            current_time,
+            data_json.get("timestamp") # timestamp
         ))
 
         conn.commit()
