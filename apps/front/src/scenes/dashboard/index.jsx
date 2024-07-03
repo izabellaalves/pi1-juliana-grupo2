@@ -60,7 +60,7 @@ const Dashboard = () => {
     <Box m="20px">
       {/* HEADER */}
       <Box display="flex" justifyContent="space-between" alignItems="center">
-        <Header title="CARRINHO DE LINHA" subtitle="PI 1 | Turma 4 | Grupo 2 | Projeto de Algoritmo" />
+        <Header title="CARRINHO DE LINHA" subtitle="Projeto Integrador 1 | Turma 4 | Grupo 2 " />
 
         {/* <Box>
           <Button
@@ -91,7 +91,7 @@ const Dashboard = () => {
           <>
             {/* TEMPO */}
             <Box
-              gridColumn="span 2"
+              gridColumn="span 3"
               backgroundColor={colors.primary[400]}
               display="flex"
               alignItems="center"
@@ -133,7 +133,7 @@ const Dashboard = () => {
 
             {/* CONSUMO ENERGETICO */}
             <Box
-              gridColumn="span 2"
+              gridColumn="span 3"
               backgroundColor={colors.primary[400]}
               display="flex"
               alignItems="center"
@@ -156,7 +156,7 @@ const Dashboard = () => {
 
         {/* TRAJETORIA */}
         <Box
-          gridColumn="span 4"
+          gridColumn="span 6"
           gridRow="span 3"
           backgroundColor={colors.primary[400]}
           padding="30px"
@@ -169,14 +169,14 @@ const Dashboard = () => {
             Trajetória
           </Typography>
           <Box height="200px">
-            <GeographyChart isDashboard={true} />
+            {/* <GeographyChart isDashboard={true} /> */}
           </Box>
         </Box>
 
         {/* ROW 2 */}
         {/* VELOCIDADE */}
         <Box
-          gridColumn="span 4"
+          gridColumn="span 6"
           gridRow="span 2"
           backgroundColor={colors.primary[400]}
         >
@@ -193,7 +193,7 @@ const Dashboard = () => {
                 fontWeight="600"
                 color={colors.grey[100]}
               >
-                Velocidade Instantânea
+                Velocidade e Aceleração Instantânea
               </Typography>
               <Typography
                 variant="h3"
@@ -201,6 +201,8 @@ const Dashboard = () => {
                 color={colors.greenAccent[500]}
               >
                 {realizaData ? `${realizaData.velocidadeInstantanea} m/s` : 'Carregando...'}
+                {' '}
+                {realizaData ? `${realizaData.aceleracaoInstantanea} m/s²` : 'Carregando...'}
               </Typography>
             </Box>
           </Box>
@@ -208,7 +210,7 @@ const Dashboard = () => {
             <LineChart isDashboard={true} />
           </Box>
         </Box>
-        {/* ACELERAÇÃO */}
+        {/* ACELERAÇÃO
         <Box
           gridColumn="span 4"
           gridRow="span 2"
@@ -241,7 +243,7 @@ const Dashboard = () => {
           <Box height="250px" m="-20px 0 0 0">
             <LineChart isDashboard={true} />
           </Box>
-        </Box>
+        </Box> */}
       </Box>
     </Box>
   );

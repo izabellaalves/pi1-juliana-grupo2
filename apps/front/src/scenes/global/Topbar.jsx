@@ -21,10 +21,7 @@ const Topbar = () => {
         display="flex"
         borderRadius="3px"
       >
-        <IconButton type="button" sx={{ p: 1 }}>
-          <SearchIcon />
-        </IconButton>
-        <img src={LogoUnB} style={{ width: '100px', height: '50px', marginLeft: '10px'}} alt="Logo UnB" />
+        <img src={LogoUnB} style={{ width: '55px', height: '30px', marginLeft: '10px'}} alt="Logo UnB" />
       </Box>
 
       {/* ICONS */}
