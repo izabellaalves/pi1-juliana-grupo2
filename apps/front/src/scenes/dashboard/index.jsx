@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Box, Button, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../theme";
 import Header from "../../components/Header";
-import LineChart from "../../components/LineChart";
-import GeographyChart from "../../components/GeographyChart";
+import LineSpeed from "../../components/LineSpeed";
+import LineAcceleration from "../../components/LineAcceleration";
 import StatBox from "../../components/StatBox";
 import TimerIcon from '@mui/icons-material/Timer';
 import StraightenIcon from '@mui/icons-material/Straighten';
@@ -57,7 +57,7 @@ const Dashboard = () => {
   }, [tick]);
 
   return (
-    <Box m="20px">
+    <Box m="15px">
       {/* HEADER */}
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <Header title="CARRINHO DE LINHA" subtitle="Projeto Integrador 1 | Turma 4 | Grupo 2 " />
@@ -83,8 +83,8 @@ const Dashboard = () => {
       <Box
         display="grid"
         gridTemplateColumns="repeat(12, 1fr)"
-        gridAutoRows="140px"
-        gap="20px"
+        gridAutoRows="120px"
+        gap="15px"
       >
         {/* ROW 1 */}
         {realizaData && (
@@ -154,25 +154,7 @@ const Dashboard = () => {
           </>
         )}
 
-        {/* TRAJETORIA */}
-        <Box
-          gridColumn="span 6"
-          gridRow="span 3"
-          backgroundColor={colors.primary[400]}
-          padding="30px"
-        >
-          <Typography
-            variant="h5"
-            fontWeight="600"
-            sx={{ marginBottom: "15px" }}
-          >
-            Trajetória
-          </Typography>
-          <Box height="200px">
-            {/* <GeographyChart isDashboard={true} /> */}
-          </Box>
-        </Box>
-
+        
         {/* ROW 2 */}
         {/* VELOCIDADE */}
         <Box
@@ -193,26 +175,42 @@ const Dashboard = () => {
                 fontWeight="600"
                 color={colors.grey[100]}
               >
-                Velocidade e Aceleração Instantânea
+                Velocidade Instantânea
               </Typography>
               <Typography
-                variant="h3"
+                variant="h4"
                 fontWeight="bold"
                 color={colors.greenAccent[500]}
               >
                 {realizaData ? `${realizaData.velocidadeInstantanea} m/s` : 'Carregando...'}
-                {' '}
-                {realizaData ? `${realizaData.aceleracaoInstantanea} m/s²` : 'Carregando...'}
-              </Typography>
+                </Typography>
             </Box>
           </Box>
-          <Box height="250px" m="-20px 0 0 0">
-            <LineChart isDashboard={true} />
+          <Box height="190px" m="-20px 0 0 0">
+            <LineSpeed isDashboard={true} />
           </Box>
         </Box>
-        {/* ACELERAÇÃO
+        {/* TRAJETORIA */}
         <Box
-          gridColumn="span 4"
+          gridColumn="span 6"
+          gridRow="span 3"
+          backgroundColor={colors.primary[400]}
+          padding="30px"
+        >
+          <Typography
+            variant="h5"
+            fontWeight="600"
+            sx={{ marginBottom: "15px" }}
+          >
+            Trajetória
+          </Typography>
+          <Box height="200px">
+            {/* <GeographyChart isDashboard={true} /> */}
+          </Box>
+        </Box>
+        {/* ACELERAÇÃO */}
+        <Box
+          gridColumn="span 6"
           gridRow="span 2"
           backgroundColor={colors.primary[400]}
         >
@@ -232,7 +230,7 @@ const Dashboard = () => {
                 Aceleração Instantânea
               </Typography>
               <Typography
-                variant="h3"
+                variant="h4"
                 fontWeight="bold"
                 color={colors.greenAccent[500]}
               >
@@ -240,10 +238,12 @@ const Dashboard = () => {
               </Typography>
             </Box>
           </Box>
-          <Box height="250px" m="-20px 0 0 0">
-            <LineChart isDashboard={true} />
+          <Box height="190px" m="-20px 0 0 0">
+            <LineAcceleration isDashboard={true} />
           </Box>
-        </Box> */}
+        </Box> 
+        
+
       </Box>
     </Box>
   );
