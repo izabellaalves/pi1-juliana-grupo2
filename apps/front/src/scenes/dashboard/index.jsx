@@ -186,7 +186,7 @@ const Dashboard = () => {
                 </Typography>
             </Box>
           </Box>
-          <Box height="190px" m="-20px 0 0 0">
+          <Box height="190px" m="-10px 0 0 0">
             <LineSpeed isDashboard={true} />
           </Box>
         </Box>
@@ -238,7 +238,7 @@ const Dashboard = () => {
               </Typography>
             </Box>
           </Box>
-          <Box height="190px" m="-20px 0 0 0">
+          <Box height="190px" m="-10px 0 0 0">
             <LineAcceleration isDashboard={true} />
           </Box>
         </Box> 

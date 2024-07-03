@@ -66,11 +66,11 @@ export const mockLineSeep = [
     color: tokens("dark").greenAccent[500],
     data: instantSpeedData,
   },
-  {
-    id: "Velocidade Média",
-    color: tokens("dark").blueAccent[500],
-    data: averageSpeedData,
-  },
+  // {
+  //   id: "Velocidade Média",
+  //   color: tokens("dark").blueAccent[500],
+  //   data: averageSpeedData,
+  // },
 ];
 
 export const mockLineAcceleration = [
