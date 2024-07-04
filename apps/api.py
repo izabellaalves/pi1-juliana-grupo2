@@ -26,11 +26,11 @@ CORS(app)
 
 # Variáves globais
 
-g_to_m_per_s2 = 9.8
+g_to_m_per_s2 = 9.81
 velocidade_x_global = 0.0
 velocidade_y_global = 0.0
 
-delta_t = 1.0
+delta_t = 0.02
 
 def convert_g_to_m_per_s2(acceleration_g):
     return round(acceleration_g * g_to_m_per_s2, 2)
@@ -43,30 +43,30 @@ def resetar_velocidades_globais():
 def calcular_velocidade_resultante(aceleracao_x, aceleracao_y):
     global velocidade_x_global, velocidade_y_global
     
+    if (calcular_aceleracao_resultante(aceleracao_x, aceleracao_y) == 0.0): return 0.0
+    
     aceleracao_x_m_s2 = convert_g_to_m_per_s2(aceleracao_x)
     aceleracao_y_m_s2 = convert_g_to_m_per_s2(aceleracao_y)
 
-    # Atualiza as velocidades integrando as acelerações
     velocidade_x_global += aceleracao_x_m_s2 * delta_t
     velocidade_y_global += aceleracao_y_m_s2 * delta_t
 
-    # Calcula a velocidade resultante
     velocidade_resultante = np.sqrt(velocidade_x_global**2 + velocidade_y_global**2)
+    
+    # velocidade_x_global = 0.0
+    # velocidade_y_global = 0.0
 
-    return round(velocidade_resultante, 2)
+    return velocidade_resultante
 
 def calcular_aceleracao_resultante(aceleracao_x, aceleracao_y):
-    # Converte as acelerações de g para m/s^2
     aceleracao_x_m_s2 = convert_g_to_m_per_s2(aceleracao_x)
     aceleracao_y_m_s2 = convert_g_to_m_per_s2(aceleracao_y)
     
-    # Calcula a aceleração resultante
     aceleracao_resultante = np.sqrt(aceleracao_x_m_s2**2 + aceleracao_y_m_s2**2)
     
-    if aceleracao_resultante < 0.5:
-        return 0.0
+    if (aceleracao_resultante <= 0.5): return 0.0
     
-    return round(aceleracao_resultante, 2)
+    return aceleracao_resultante
 
 # Configuração do banco de dados SQLite
 
@@ -91,7 +91,7 @@ def init_db():
         ''',
         '''
         CREATE TABLE IF NOT EXISTS REALIZA (
-          id INTEGER PRIMARY KEY,
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
           idCarrinho INT,
           idPercurso INT,
           dataRealizacao TEXT,
@@ -136,15 +136,14 @@ def save_data_to_sqlite(data):
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         cursor.execute('''
-        INSERT INTO REALIZA (id, idCarrinho, idPercurso, dataRealizacao, velocidadeInstantanea, aceleracaoInstantanea, trajetoria, consumoEnergetico, versao, tempo)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO REALIZA (idCarrinho, idPercurso, dataRealizacao, velocidadeInstantanea, aceleracaoInstantanea, trajetoria, consumoEnergetico, versao, tempo)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (
-            1, # id
             1,  # idCarrinho
             1,  # idPercurso
             current_time,  # dataRealizacao
-            calcular_velocidade_resultante(round(data_json.get("aceleracaoX"), 2), round(data_json.get("aceleracaoY"), 2)),  # velocidadeInstantanea
-            calcular_aceleracao_resultante(round(data_json.get("aceleracaoX"), 2), round(data_json.get("aceleracaoY"), 2)), # aceleracaoInstantanea
+            calcular_velocidade_resultante(round(data_json.get("aceleracaoX"), 2), round(data_json.get("aceleracaoY"), 1)),  # velocidadeInstantanea
+            calcular_aceleracao_resultante(round(data_json.get("aceleracaoX"), 2), round(data_json.get("aceleracaoY"), 1)), # aceleracaoInstantanea
             json.dumps(data_json.get("trajetoria")),  # trajetoria
             data_json.get("consumoEnergetico"),  # consumoEnergetico
             "1.0",  # versao 
@@ -245,11 +244,11 @@ if __name__ == "__main__":
     try:
         while True:
             # data = read_data_from_esp32()
-            data = '{"trajetoria": [[1, 2], [3, 4], [5, 6]], "consumoEnergetico": 100, "tempo": 10, "aceleracaoX": 0.1, "aceleracaoY": 0.2, "aceleracaoZ": 0.84}'
+            data = '{"trajetoria":[[1, 2], [3, 4], [5, 6]],"consumoEnergetico":100,"tempo":155,"aceleracaoX":-0.049804688,"aceleracaoY":0.172607422}'
             if data:
                 print(f"Dado recebido: {data}")
                 save_data_to_sqlite(data)
-            time.sleep(1) # se estiver usando a ESP32, alterar para 0.02
+            time.sleep(2) # se estiver usando a ESP32, alterar para 0.02
     except KeyboardInterrupt:
         print("Programa encerrado")
     """ finally: 
