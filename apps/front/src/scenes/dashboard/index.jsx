@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Button, Typography, useTheme } from "@mui/material";
+import { Box, Button, SpeedDialIcon, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../theme";
 import Header from "../../components/Header";
 import LineChart from "../../components/LineChart";
@@ -9,7 +9,8 @@ import TimerIcon from '@mui/icons-material/Timer';
 import StraightenIcon from '@mui/icons-material/Straighten';
 import BatterySaverIcon from '@mui/icons-material/BatterySaver';
 import FlashOnIcon from '@mui/icons-material/FlashOn';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import SpeedIcon from '@mui/icons-material/Speed';
+import AirIcon from '@mui/icons-material/Air';
 
 const Dashboard = () => {
   const theme = useTheme();
@@ -23,7 +24,7 @@ const Dashboard = () => {
   useEffect(() => {
     const intervalId = setInterval(() => {
       setTick(tick => tick + 1);
-    }, 1000);
+    }, 100);
 
     return () => clearInterval(intervalId);
   }, []);
@@ -176,72 +177,44 @@ const Dashboard = () => {
         {/* ROW 2 */}
         {/* VELOCIDADE */}
         <Box
-          gridColumn="span 4"
-          gridRow="span 2"
-          backgroundColor={colors.primary[400]}
-        >
-          <Box
-            mt="25px"
-            p="0 30px"
-            display="flex "
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Box>
-              <Typography
-                variant="h5"
-                fontWeight="600"
-                color={colors.grey[100]}
-              >
-                Velocidade Instantânea
-              </Typography>
-              <Typography
-                variant="h3"
-                fontWeight="bold"
-                color={colors.greenAccent[500]}
-              >
-                {realizaData ? `${realizaData.velocidadeInstantanea} m/s` : 'Carregando...'}
-              </Typography>
+              gridColumn="span 2"
+              backgroundColor={colors.primary[400]}
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+            >
+              <StatBox
+                 title={realizaData ? `${realizaData.velocidadeInstantanea.toFixed(5)} s` : 'Carregando...'}
+                subtitle="Velocidade Instantânea"
+                progress="0.50"
+                increase=""
+                icon={
+                  <SpeedIcon
+                    sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
+                  />
+                }
+              />
             </Box>
-          </Box>
-          <Box height="250px" m="-20px 0 0 0">
-            <LineChart isDashboard={true} />
-          </Box>
-        </Box>
         {/* ACELERAÇÃO */}
         <Box
-          gridColumn="span 4"
-          gridRow="span 2"
-          backgroundColor={colors.primary[400]}
-        >
-          <Box
-            mt="25px"
-            p="0 30px"
-            display="flex "
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Box>
-              <Typography
-                variant="h5"
-                fontWeight="600"
-                color={colors.grey[100]}
-              >
-                Aceleração Instantânea
-              </Typography>
-              <Typography
-                variant="h3"
-                fontWeight="bold"
-                color={colors.greenAccent[500]}
-              >
-                {realizaData ? `${realizaData.aceleracaoInstantanea} m/s²` : 'Carregando...'}
-              </Typography>
+              gridColumn="span 2"
+              backgroundColor={colors.primary[400]}
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+            >
+              <StatBox
+                 title={realizaData ? `${realizaData.aceleracaoInstantanea.toFixed(5)} s` : 'Carregando...'}
+                subtitle="Aceleração Instantânea"
+                progress="0.50"
+                increase=""
+                icon={
+                  <AirIcon
+                    sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
+                  />
+                }
+              />
             </Box>
-          </Box>
-          <Box height="250px" m="-20px 0 0 0">
-            <LineChart isDashboard={true} />
-          </Box>
-        </Box>
       </Box>
     </Box>
   );

@@ -11,7 +11,7 @@ import numpy as np
 
 # Configurações de conexão serial
 
-""" bluetoothport = 'COM8'
+""" bluetoothport = 'COM5'
 baudrate = 115200
 
 try:
@@ -26,14 +26,14 @@ CORS(app)
 
 # Variáves globais
 
-g_to_m_per_s2 = 9.8
+g_to_m_per_s2 = 9.81
 velocidade_x_global = 0.0
 velocidade_y_global = 0.0
 
-delta_t = 0.2
+delta_t = 0.02
 
 def convert_g_to_m_per_s2(acceleration_g):
-    return round(acceleration_g * g_to_m_per_s2, 1)
+    return round(acceleration_g * g_to_m_per_s2, 2)
 
 def resetar_velocidades_globais():
     global velocidade_x_global, velocidade_y_global
@@ -43,25 +43,28 @@ def resetar_velocidades_globais():
 def calcular_velocidade_resultante(aceleracao_x, aceleracao_y):
     global velocidade_x_global, velocidade_y_global
     
+    if (calcular_aceleracao_resultante(aceleracao_x, aceleracao_y) == 0.0): return 0.0
+    
     aceleracao_x_m_s2 = convert_g_to_m_per_s2(aceleracao_x)
     aceleracao_y_m_s2 = convert_g_to_m_per_s2(aceleracao_y)
 
-    # Atualiza as velocidades integrando as acelerações
     velocidade_x_global += aceleracao_x_m_s2 * delta_t
     velocidade_y_global += aceleracao_y_m_s2 * delta_t
 
-    # Calcula a velocidade resultante
     velocidade_resultante = np.sqrt(velocidade_x_global**2 + velocidade_y_global**2)
+    
+    # velocidade_x_global = 0.0
+    # velocidade_y_global = 0.0
 
     return velocidade_resultante
 
 def calcular_aceleracao_resultante(aceleracao_x, aceleracao_y):
-    # Converte as acelerações de g para m/s^2 com arredondamento
     aceleracao_x_m_s2 = convert_g_to_m_per_s2(aceleracao_x)
     aceleracao_y_m_s2 = convert_g_to_m_per_s2(aceleracao_y)
     
-    # Calcula a aceleração resultante
     aceleracao_resultante = np.sqrt(aceleracao_x_m_s2**2 + aceleracao_y_m_s2**2)
+    
+    if (aceleracao_resultante <= 0.5): return 0.0
     
     return aceleracao_resultante
 
@@ -88,7 +91,7 @@ def init_db():
         ''',
         '''
         CREATE TABLE IF NOT EXISTS REALIZA (
-          id INTEGER,
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
           idCarrinho INT,
           idPercurso INT,
           dataRealizacao TEXT,
@@ -133,15 +136,14 @@ def save_data_to_sqlite(data):
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         cursor.execute('''
-        INSERT INTO REALIZA (id, idCarrinho, idPercurso, dataRealizacao, velocidadeInstantanea, aceleracaoInstantanea, trajetoria, consumoEnergetico, versao, tempo)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO REALIZA (idCarrinho, idPercurso, dataRealizacao, velocidadeInstantanea, aceleracaoInstantanea, trajetoria, consumoEnergetico, versao, tempo)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (
-            1002, # id
             1,  # idCarrinho
             1,  # idPercurso
             current_time,  # dataRealizacao
-            calcular_velocidade_resultante(data_json.get("aceleracaoX"), data_json.get("aceleracaoY")),  # velocidadeInstantanea
-            calcular_aceleracao_resultante(data_json.get("aceleracaoX"), data_json.get("aceleracaoY")), # aceleracaoInstantanea
+            calcular_velocidade_resultante(round(data_json.get("aceleracaoX"), 2), round(data_json.get("aceleracaoY"), 1)),  # velocidadeInstantanea
+            calcular_aceleracao_resultante(round(data_json.get("aceleracaoX"), 2), round(data_json.get("aceleracaoY"), 1)), # aceleracaoInstantanea
             json.dumps(data_json.get("trajetoria")),  # trajetoria
             data_json.get("consumoEnergetico"),  # consumoEnergetico
             "1.0",  # versao 
@@ -197,7 +199,7 @@ def get_last_10_records():
         cursor.execute('SELECT tempo, velocidadeInstantanea FROM REALIZA ORDER BY id DESC LIMIT 10')
         rows = cursor.fetchall()
 
-        data = [{"x": row[0], "y": row[1]} for row in rows]
+        data = [{"y": row[0], "x": row[1]} for row in rows]
 
         cursor.close()
         conn.close()
@@ -211,35 +213,6 @@ def receive_data():
     data = request.json
     save_data_to_sqlite(json.dumps(data))
     return jsonify({"status": "success"}), 201
-
-@app.route('/all_data', methods=['GET'])
-def get_all_data():
-    try:
-        conn = sqlite3.connect(DATABASE)
-        cursor = conn.cursor()
-
-        cursor.execute('SELECT * FROM REALIZA')
-        rows = cursor.fetchall()
-
-        data = [{
-            "id": row[0],
-            "idCarrinho": row[1],
-            "idPercurso": row[2],
-            "dataRealizacao": row[3],
-            "velocidadeInstantanea": row[4],
-            "aceleracaoInstantanea": row[5],
-            "trajetoria": json.loads(row[6]),
-            "consumoEnergetico": row[7],
-            "versao": row[8],
-            "tempo": row[9]
-        } for row in rows]
-
-        cursor.close()
-        conn.close()
-
-        return jsonify(data)
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
 
 @app.route('/data', methods=['GET'])
 def get_data():
@@ -273,13 +246,24 @@ def get_data():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
-    
+data_list = [
+    {"trajetoria": [[1, 2], [3, 4], [5, 6]], "consumoEnergetico": 100, "tempo": 154, "aceleracaoX": 0.038818359, "aceleracaoY": 0.217041016},
+    {"trajetoria": [[1, 2], [3, 4], [5, 6]], "consumoEnergetico": 100, "tempo": 154, "aceleracaoX": 0.115478516, "aceleracaoY": 0.114013672},
+    {"trajetoria": [[1, 2], [3, 4], [5, 6]], "consumoEnergetico": 100, "tempo": 155, "aceleracaoX": 0.039550781, "aceleracaoY": -0.132568359},
+    {"trajetoria": [[1, 2], [3, 4], [5, 6]], "consumoEnergetico": 100, "tempo": 155, "aceleracaoX": -0.063232422, "aceleracaoY": -0.124267578},
+    {"trajetoria": [[1, 2], [3, 4], [5, 6]], "consumoEnergetico": 100, "tempo": 155, "aceleracaoX": -0.056396484, "aceleracaoY": 0.1328125},
+    {"trajetoria": [[1, 2], [3, 4], [5, 6]], "consumoEnergetico": 100, "tempo": 155, "aceleracaoX": -0.049804688, "aceleracaoY": 0.172607422},
+    {"trajetoria": [[1, 2], [3, 4], [5, 6]], "consumoEnergetico": 100, "tempo": 155, "aceleracaoX": -0.056396484, "aceleracaoY": 0.158691406},
+    {"trajetoria": [[1, 2], [3, 4], [5, 6]], "consumoEnergetico": 100, "tempo": 156, "aceleracaoX": 0.055175781, "aceleracaoY": -0.004150391},
+    {"trajetoria": [[1, 2], [3, 4], [5, 6]], "consumoEnergetico": 100, "tempo": 156, "aceleracaoX": 0.180419922, "aceleracaoY": 0.041259766}
+]
 
 if __name__ == "__main__":
     print("Aguardando dados...")
     
     def start_flask():
         app.run(host='0.0.0.0', port=5000)
+
 
     flask_thread = Thread(target=start_flask)
     flask_thread.start()
@@ -289,12 +273,11 @@ if __name__ == "__main__":
 
     try:
         while True:
-            # data = read_data_from_esp32()
-            data = '{"trajetoria": [[1, 2], [3, 4], [5, 6]], "consumoEnergetico": 100, "tempo": 10, "aceleracaoX": 0.01, "aceleracaoY": -0.01, "aceleracaoZ": 0.84}'
-            if data:
-                print(f"Dado recebido: {data}")
-                save_data_to_sqlite(data)
-            time.sleep(1) # se estiver usando a ESP32, alterar para 0.02
+            for data in data_list:
+                data_json = str(data).replace("'", '"')  # Convertendo o dict para um formato JSON string
+                print(f"Dado recebido: {data_json}")
+                save_data_to_sqlite(data_json)
+                time.sleep(1)  # se estiver usando a ESP32, alterar para 0.02
     except KeyboardInterrupt:
         print("Programa encerrado")
     """ finally: 
