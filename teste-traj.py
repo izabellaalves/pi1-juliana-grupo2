@@ -1,9 +1,8 @@
 import matplotlib.pyplot as plt
 import json
-import time
 
-# Função atualizada para aceitar dados mockados
-def plot_percurso_carrinho_mocked(data_list, dt=0.2, duration=10):
+# Função para plotar o percurso do carrinho com dados mockados
+def plot_percurso_carrinho_mocked(data_list, dt=0.2):
     # Listas para armazenar os dados
     accX_data = []
     accY_data = []
@@ -43,18 +42,9 @@ def plot_percurso_carrinho_mocked(data_list, dt=0.2, duration=10):
     plt.grid()
     plt.show()
 
-# Array de dados mockados
-data_list = [
-    {"trajetoria": [[1, 2], [3, 4], [5, 6]], "consumoEnergetico": 100, "tempo": 154, "aceleracaoX": 0.038818359, "aceleracaoY": 0.217041016},
-    {"trajetoria": [[1, 2], [3, 4], [5, 6]], "consumoEnergetico": 100, "tempo": 154, "aceleracaoX": 0.115478516, "aceleracaoY": 0.114013672},
-    {"trajetoria": [[1, 2], [3, 4], [5, 6]], "consumoEnergetico": 100, "tempo": 155, "aceleracaoX": 0.039550781, "aceleracaoY": -0.132568359},
-    {"trajetoria": [[1, 2], [3, 4], [5, 6]], "consumoEnergetico": 100, "tempo": 155, "aceleracaoX": -0.063232422, "aceleracaoY": -0.124267578},
-    {"trajetoria": [[1, 2], [3, 4], [5, 6]], "consumoEnergetico": 100, "tempo": 155, "aceleracaoX": -0.056396484, "aceleracaoY": 0.1328125},
-    {"trajetoria": [[1, 2], [3, 4], [5, 6]], "consumoEnergetico": 100, "tempo": 155, "aceleracaoX": -0.049804688, "aceleracaoY": 0.172607422},
-    {"trajetoria": [[1, 2], [3, 4], [5, 6]], "consumoEnergetico": 100, "tempo": 155, "aceleracaoX": -0.056396484, "aceleracaoY": 0.158691406},
-    {"trajetoria": [[1, 2], [3, 4], [5, 6]], "consumoEnergetico": 100, "tempo": 156, "aceleracaoX": 0.055175781, "aceleracaoY": -0.004150391},
-    {"trajetoria": [[1, 2], [3, 4], [5, 6]], "consumoEnergetico": 100, "tempo": 156, "aceleracaoX": 0.180419922, "aceleracaoY": 0.041259766}
-]
+# Carrega os dados do arquivo JSON
+with open('dados.json', 'r') as file:
+    data_list = json.load(file)
 
-# Chamando a função com os dados mockados
+# Chama a função com os dados do JSON
 plot_percurso_carrinho_mocked(data_list)

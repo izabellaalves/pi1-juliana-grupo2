@@ -11,7 +11,7 @@ import numpy as np
 
 # Configurações de conexão serial
 
-""" bluetoothport = 'COM8'
+bluetoothport = 'COM7'
 baudrate = 115200
 
 try:
@@ -19,7 +19,7 @@ try:
     print(f"Conectado à porta {bluetoothport} com baudrate {baudrate}")
 except Exception as e:
     print(f"Erro ao conectar na porta serial: {e}")
-    exit() """
+    exit()
 
 app = Flask(__name__)
 CORS(app)
@@ -88,7 +88,7 @@ def init_db():
         ''',
         '''
         CREATE TABLE IF NOT EXISTS REALIZA (
-          id INTEGER,
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
           idCarrinho INT,
           idPercurso INT,
           dataRealizacao TEXT,
@@ -111,7 +111,7 @@ def init_db():
 
 init_db()
 
-""" def read_data_from_esp32():
+def read_data_from_esp32():
     try:
         if ser.in_waiting > 0:
             data = ser.readline().decode('utf-8').strip()
@@ -121,8 +121,16 @@ init_db()
             print("Nenhum dado disponível na porta serial.")
     except Exception as e:
         print(f"Erro ao ler dados: {e}")
-    return None """
+    return None
 
+def save_data_to_json(data, filename='data.json'):
+    try:
+        with open(filename, 'a') as file:
+            json.dump(data, file)
+            file.write('\n')
+    except Exception as e:
+        print(f"erro: {e}")
+        
 def save_data_to_sqlite(data):
     try:
         conn = sqlite3.connect(DATABASE)
@@ -133,10 +141,9 @@ def save_data_to_sqlite(data):
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         cursor.execute('''
-        INSERT INTO REALIZA (id, idCarrinho, idPercurso, dataRealizacao, velocidadeInstantanea, aceleracaoInstantanea, trajetoria, consumoEnergetico, versao, tempo)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO REALIZA (idCarrinho, idPercurso, dataRealizacao, velocidadeInstantanea, aceleracaoInstantanea, trajetoria, consumoEnergetico, versao, tempo)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (
-            1002, # id
             1,  # idCarrinho
             1,  # idPercurso
             current_time,  # dataRealizacao
@@ -247,7 +254,7 @@ def get_data():
         conn = sqlite3.connect(DATABASE)
         cursor = conn.cursor()
 
-        cursor.execute('SELECT * FROM REALIZA ORDER BY id DESC LIMIT 1')
+        cursor.execute('SELECT * FROM REALIZA ORDER BY dataRealizacao DESC LIMIT 1')
         row = cursor.fetchone()
 
         if row:
@@ -289,12 +296,13 @@ if __name__ == "__main__":
 
     try:
         while True:
-            # data = read_data_from_esp32()
-            data = '{"trajetoria": [[1, 2], [3, 4], [5, 6]], "consumoEnergetico": 100, "tempo": 10, "aceleracaoX": 0.01, "aceleracaoY": -0.01, "aceleracaoZ": 0.84}'
+            data = read_data_from_esp32()
+            #data = '{"trajetoria": [[1, 2], [3, 4], [5, 6]], "consumoEnergetico": 100, "tempo": 10, "aceleracaoX": 0.01, "aceleracaoY": -0.01, "aceleracaoZ": 0.84}'
             if data:
                 print(f"Dado recebido: {data}")
                 save_data_to_sqlite(data)
-            time.sleep(1) # se estiver usando a ESP32, alterar para 0.02
+                save_data_to_json(data)
+            time.sleep(0.5) # se estiver usando a ESP32, alterar para 0.02
     except KeyboardInterrupt:
         print("Programa encerrado")
     """ finally: 
